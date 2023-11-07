@@ -1,0 +1,9 @@
+﻿@{
+	var title = ViewData["titleMsg"] ?? "Notification";
+	var content = ViewData["content"] ?? "Noti content";
+}
+<div class="p-3 mb-2 bg-info text-white">
+	<strong>@title</strong>
+	<br/>
+	@content
+</div>

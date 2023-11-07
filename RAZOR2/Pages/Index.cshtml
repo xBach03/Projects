@@ -1,0 +1,13 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+    var welcome = "<div class = 'alert alert-danger'>Welcome</div>";
+
+}
+<h1 class="display-4 text-danger">RAZOR SYNTAX</h1>
+<ul>
+    <li>@(5+6)</li>
+    <li>PI = @Math.PI, Sin(PI/4) = @Math.Sin(Math.PI/4)</li>
+    <li>@welcome</li>
+</ul>

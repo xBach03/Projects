@@ -1,0 +1,20 @@
+﻿@{
+	ViewData["Title"] = "Timetable";
+}
+
+<div class="text-center">
+	<h1>Welcome to Spring Back's Timetable managing system</h1>
+	<form method="post" enctype="multipart/form-data">
+		<div class="mb-2">
+			<label class="form-label">Upload file excel below to create your new timetable</label>
+			<div>
+				<input class="form-control" type="file" name="file">
+			</div>
+			<div class="col-1">
+				<input type="submit" asp-controller="Timetable" asp-action="ExcelReader" class="btn btn-primary" value="Upload now">
+			</div>
+		</div>
+	</form>
+	
+	
+</div>

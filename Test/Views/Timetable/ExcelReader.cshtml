@@ -1,0 +1,46 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+	ViewData["Title"] = "Reader";
+}
+<div class="text-center">
+	<form method="post" >
+		<div class="active-cyan-4 mb-4">
+			<div>
+				<input class="form-control" type="text" placeholder="Enter Subject ID" name="Subject">
+				<div class="col-1">
+					<input type="submit" class="btn btn-success" value="Choose this subject" asp-controller="Timetable" asp-action="SubjectSearch" />
+				</div>
+			</div>
+		</div>
+	</form>
+</div>
+@* <table class="table">
+	<thead>
+		<tr>
+			@if (ViewBag.ExcelData != null && ViewBag.ExcelData.Count > 0)
+			{
+				@foreach (var header in ViewBag.ExcelData[0])
+				{
+					<th>@header</th>
+				}
+			}
+		</tr>
+	</thead>
+	<tbody>
+		@if (ViewBag.ExcelData != null && ViewBag.ExcelData.Count > 1)
+		{
+			@for (int i = 1; i < ViewBag.ExcelData.Count; i++)
+			{
+				<tr>
+					@foreach (var cell in ViewBag.ExcelData[i])
+					{
+						<td>@cell</td>
+					}
+				</tr>
+			}
+		}
+	</tbody>
+</table>
+ *@

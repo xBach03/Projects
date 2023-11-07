@@ -1,0 +1,60 @@
+﻿@page
+@using Razor04.Models
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+    ViewData["titleMsg"] = "Notification";
+    ViewData["content"] = "New products are on sale";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome to xBach's phone shop</h1>
+    <br/>
+</div>
+ 
+@await Html.PartialAsync("_Message")
+
+@{
+    var product1 = new Product() { Name = "Iphone X", Description = "Apple's phone", Price = 1000 };
+    var product2 = new Product() { Name = "Samsung Note 9", Description = "Samsung's phone", Price = 1300 };
+    var product3 = new Product() { Name = "Nokia 1280", Description = "Nokia's phone", Price = 750 };
+    
+}
+<div class="row" >
+    <div class="col">
+        <partial name="_ProductItem" model="product1" />
+    </div>
+    <div class="col">
+        @await Html.PartialAsync("_ProductItem", product2)
+    </div>
+    <div class="col">
+        @{
+            await Html.RenderPartialAsync("_productitem", product3);
+        }
+    </div>
+</div>
+<div class="row">
+    <div></div>    @{
+        var products = new List<Product>()
+        {
+            new Product(){Name = "Prod1", Description = "Description for Prod1", Price = 500},
+            new Product(){Name = "Prod2", Description = "Description for Prod2", Price = 780},
+            new Product(){Name = "Prod3", Description = "Description for Prod3", Price = 1500},
+        };
+        foreach(var product in products)
+        {
+            <div class="col">
+            <partial name="_ProductItem" model = "product"/>
+            </div>
+        }
+        // <div class="card">
+        //     <h2 class="card-header text-primary">@Model.Name</h2>
+        //     <div class="card-body">
+        //         <p class="card-text">@Model.Description</p>
+        //         <p>Price: @Model.Price$</p>
+        //         <a asp-page="/Order" class="btn btn-secondary btn-sm">Order now</a>
+        //     </div>
+        // </div>
+    }
+</div>
+
