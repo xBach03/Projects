@@ -4,84 +4,352 @@
 @{
 	ViewData["Title"] = "Arrange timetable";
 }
+@model List<TempTimetable>;
 <div class="container">
 	<ul class="list-inline">
 		@foreach (var subject in ViewBag.Subjects)
 			{
 				@* <div class="mt-2 btn btn-primary mr-1"></div> *@
 		
-				<li class="list-inline-item">
-					<form method="post" >
+				@* <li class="list-inline-item">
+					<form method="post">
 						<input type="hidden" name="subjectId" value="@subject.SubjectId" />
-					<button type="submit" class="mt-2 btn btn-primary" asp-controller="Timetable" asp-action="Arrange">@subject.SubjectId: @subject.SubjectName</button>
+					<button type="submit" class="mt-2 btn btn-primary" asp-controller="Timetable" asp-action="Arrange" onclick="myMethod()" id="@subject.SubjectId">@subject.SubjectId: @subject.SubjectName</button>
 					</form>
+				</li> *@
+				<li class="list-inline-item">
+				<button class="mt-2 btn btn-primary" onclick="showClasses('@subject.SubjectId')">@subject.SubjectId: @subject.SubjectName</button>
 				</li>
 			}
 	</ul>
 </div>
-<div>
-	@foreach(var subject in ViewBag.Class)
+@* <div>
+	@foreach (var subject in ViewBag.Class)
 	{
-		<div>@subject.SubjectId: @subject.ClassId</div>
+		<div>@subject.SubjectId: @subject.ClassId - @subject.ClassType - @subject.Weekday: @subject.Time</div>
 	}
-</div>
+</div> *@
 <div class="container">
-	<div class="timetable-img text-center">
-		<img src="img/content/timetable.png" alt="">
-	</div>
 	<div class="table-responsive">
-		<table class="table table-bordered text-center">
-			<thead>
-				<tr class="bg-light-gray">
-					<th class="text-uppercase">
-						Time
-					</th>
-					<th class="text-uppercase">Monday</th>
-					<th class="text-uppercase">Tuesday</th>
-					<th class="text-uppercase">Wednesday</th>
-					<th class="text-uppercase">Thursday</th>
-					<th class="text-uppercase">Friday</th>
-					<th class="text-uppercase">Saturday</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<td class="align-middle">06:00</td>
-				</tr>
-				<tr>
-					<td class="align-middle">07:00</td>
-				</tr>
-				<tr>
-					<td class="align-middle">08:00</td>
-				</tr>
-				<tr>
-					<td class="align-middle">09:00</td>
-				</tr>
-				<tr>
-					<td class="align-middle">10:00</td>
-				</tr>
-				<tr>
-					<td class="align-middle">11:00</td>
-				</tr>
-				<tr>
-					<td class="align-middle">12:00</td>
-				</tr>
-				<tr>
-					<td class="align-middle">13:00</td>
-				</tr>
-				<tr>
-					<td class="align-middle">14:00</td>
-				</tr>
-				<tr>
-					<td class="align-middle">15:00</td>
-				</tr>
-				<tr>
-					<td class="align-middle">16:00</td>
-				</tr>
-				<tr>
-					<td class="align-middle">17:00</td>
-				</tr>
-			</tbody>
+		<table class="table table-bordered text-center" id="myTable">
+			<tr class="bg-light-gray">
+				<td class="text-uppercase">time</td>
+				<td class="text-uppercase">monday</td>
+				<td class="text-uppercase">tuesday</td>
+				<td class="text-uppercase">wednesday</td>
+				<td class="text-uppercase">thursday</td>
+				<td class="text-uppercase">friday</td>
+				<td class="text-uppercase">saturday</td>
+			</tr>
+			<tr>
+				<td class="align-middle">0645</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td class="align-middle">0730</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td class="align-middle">0815</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td class="align-middle">0825</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td class="align-middle">0920</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td class="align-middle">1005</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td class="align-middle">1015</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td class="align-middle">1100</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td class="align-middle">1145</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td class="align-middle">1230</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td class="align-middle">1315</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td class="align-middle">1400</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td class="align-middle">1410</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td class="align-middle">1455</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td class="align-middle">1505</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td class="align-middle">1550</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td class="align-middle">1600</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td class="align-middle">1645</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td class="align-middle">1730</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
 		</table>
 	</div>
 </div>
+<script>
+	var selectedSubjects = [];
+	var displayedSubject = [];
+	function showClasses(subjectId) {
+
+		$.ajax({
+			url: '/TimeTable/GetClassesBySubjectId', 
+			type: 'GET',
+			datatype: 'json',
+			data: { subjectId: subjectId },
+			success: function (classData) {
+				// console.log(classData);
+				// classData.forEach(function (classInfo) {
+				// 	console.log(classInfo.time);
+				// })
+				displaySubjects(classData);
+			},
+			error: function (error) {
+				console.error('Error fetching class data:', error);
+			}
+		});
+	}
+	function displaySubjects(classData) {
+		// Clear existing subject display content without the first row and column
+		var cellsToClear = $('#myTable tr:not(:first-child) td:not(:first-child)').not(':has(.selectedSubject)');
+		cellsToClear.empty().removeAttr('style').removeAttr('rowspan');
+		function timeConverter(time) {
+			if (time == '0645') return 1;
+			else if (time == '0730') return 2;
+			else if (time == '0815') return 3;
+			else if (time == '0825') return 4;
+			else if (time == '0920') return 5;
+			else if (time == '1005') return 6;
+			else if (time == '1015') return 7;
+			else if (time == '1100') return 8;
+			else if (time == '1145') return 9;
+			else if (time == '1230') return 10;
+			else if (time == '1315') return 11;
+			else if (time == '1400') return 12;
+			else if (time == '1410') return 13;
+			else if (time == '1455') return 14;
+			else if (time == '1505') return 15;
+			else if (time == '1550') return 16;
+			else if (time == '1600') return 17;
+			else if (time == '1645') return 18;
+			else if (time == '1730') return 19;
+		}
+		function classCode(classSearch) {
+			var results = [];
+			classData.forEach(function (classInfo) {
+				if (classInfo.subjectName === classSearch.subjectName && classInfo.time === classSearch.time && classInfo.weekday === classSearch.weekday) {
+					results.push(classInfo.classId);
+				}
+			})
+			return results.join('/');
+		}
+		// Iterate through classData and create div elements for each class
+		classData.forEach(function (classInfo) {
+			
+			var timeSplit = classInfo.time.split('-');
+			var startTime = timeConverter(timeSplit[0]);
+			var endTime = timeConverter(timeSplit[1]);
+
+			// Find the corresponding table cells
+			var cells = $('#myTable tr').slice(startTime, endTime+1).find('td').eq(classInfo.weekday - 1);
+
+			// Create a div element for the class
+			if (!cells.children('.subjectDiv').length) {
+				
+				var subjectDiv = $('<div>')
+					.html(classInfo.subjectName + '<br>' + classCode(classInfo))
+					.addClass('subjectDiv btn')
+					.css({
+						'color': '#000000', // Set your desired text color
+						'padding': '5px',
+						'border-radius': '5px',
+					});
+
+				// Set the rowspan attribute to span the correct duration
+				cells.attr('rowspan', endTime - startTime + 1).css({ 'background-color': '#E0F4FF' }) // Set span and background color of cells
+
+				// Append the div to the first cell in the column
+				cells.first().append(subjectDiv);
+
+				subjectDiv.on('click', function () {
+					// Check if the subject is not already in the selectedSubjects array
+					if (!selectedSubjects.some(subject => (subject.subjectName === classInfo.subjectName))) {
+						
+						// Add the selected subject to the global array when clicked
+						selectedSubjects.push(classInfo);
+						console.log(selectedSubjects);
+						
+						// Update the table with selected subjects
+						updateTable(classInfo);
+					}
+				});
+			}
+		});
+	}
+
+	
+	function updateTable(classInfo) {
+		// Clear existing subject display content without the first row and column
+		$('#myTable tr:not(:first-child) td:not(:first-child):not(:has(.selectedSubject))').empty().removeAttr('style').removeAttr('rowspan');
+
+		// Iterate through selectedSubjects and add them to the table
+		selectedSubjects.forEach(function (selectedSubject) {
+				var cells = $('#myTable tr').slice(selectedSubject.startTime, selectedSubject.endTime + 1).find('td').eq(selectedSubject.weekday - 1);
+
+				// Create a div element for the class
+				var subjectDiv = $('<div>')
+					.html(selectedSubject.subjectName + '<br>' + selectedSubject.classCode)
+					.addClass('selectedSubject btn')
+					.css({
+						'color': '#000000', // Set your desired text color
+						'padding': '5px',
+						'border-radius': '5px',
+					});
+
+				// Set the rowspan attribute to span the correct duration
+				cells.attr('rowspan', selectedSubject.endTime - selectedSubject.startTime + 1).css({ 'background-color': '#87C4FF' });
+
+				// Append the div to the first cell in the column
+				cells.first().append(subjectDiv);
+		});
+		
+	}
+	
+</script>
+
+
+
+
+
+
+
+
+

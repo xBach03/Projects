@@ -6,6 +6,7 @@ using Test.Models;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
+
 namespace Test.Controllers
 {
 	public class TimetableController : Controller
@@ -166,22 +167,44 @@ namespace Test.Controllers
 			var classesJson = JsonConvert.SerializeObject(classes);
 			HttpContext.Session.SetString("Class", classesJson);
 		}
+		//public IActionResult Arrange()
+		//{
+		//	_logger.LogInformation("Arrange action");
+		//	ViewBag.Subjects = GetSearchHistory();
+		//	ViewBag.Class = GetClasses();
+		//	return View();
+		//}
+		//[HttpPost]
 		public IActionResult Arrange()
-		{
-			_logger.LogInformation("Arrange action");
-			ViewBag.Subjects = GetSearchHistory();
-			ViewBag.Class = GetClasses();
-			return View();
-		}
-		[HttpPost]
-		public IActionResult Arrange(string subjectId)
 		{
 			_logger.LogInformation("Arrange post action");
 			ViewBag.Subjects = GetSearchHistory();
-			var search = _context.TempTables.Where(row => row.SubjectId == subjectId).ToList();
-			if (search != null) AddClass(search);
+			foreach(var subject in GetSearchHistory())
+			{
+				var search = _context.TempTables.Where(row => row.SubjectId == subject.SubjectId).ToList();
+				if (search != null) AddClass(search);
+			}
 			ViewBag.Class = GetClasses();
 			return View();
 		}
+		[HttpGet]
+		public IActionResult GetClassesBySubjectId(string subjectId)
+		{
+			var result = new List<TempTimetable>();
+			foreach(var Class in _context.TempTables)
+			{
+				if(Class.SubjectId == subjectId)
+				{
+					result.Add(Class);
+				}
+			}
+			return Json(result);
+		}
+		//public IActionResult ClassSearch(string subjectId)
+		//{
+		//	var search = _context.TempTables.Where(row => row.SubjectId == subjectId).ToList();
+		//	if (search != null) AddClass(search);
+		//	return Json(search);
+		//}
 	}
 }
