@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using Test.Models;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
-
+using Microsoft.AspNetCore.Identity;
 
 namespace Test.Controllers
 {
@@ -94,13 +94,6 @@ namespace Test.Controllers
 				}
 
 			}
-			//foreach (var row in excelData)
-			//{
-			//	foreach (var cell in row)
-			//	{
-			//		_logger.LogInformation(cell);
-			//	}
-			//}
 			return View();
 		}
 		private List<TempTimetable> GetSearchHistory()
@@ -167,14 +160,6 @@ namespace Test.Controllers
 			var classesJson = JsonConvert.SerializeObject(classes);
 			HttpContext.Session.SetString("Class", classesJson);
 		}
-		//public IActionResult Arrange()
-		//{
-		//	_logger.LogInformation("Arrange action");
-		//	ViewBag.Subjects = GetSearchHistory();
-		//	ViewBag.Class = GetClasses();
-		//	return View();
-		//}
-		//[HttpPost]
 		public IActionResult Arrange()
 		{
 			_logger.LogInformation("Arrange post action");
@@ -199,6 +184,52 @@ namespace Test.Controllers
 				}
 			}
 			return Json(result);
+		}
+		[HttpPost]
+		public async Task<IActionResult> SaveTimetable([FromBody] List<TempTimetable> SelectedClasses)
+		{
+			// Lay thong tin ID cua User 
+			var userManager = HttpContext.RequestServices.GetRequiredService<UserManager<User>>();
+			User currentUser = await userManager.GetUserAsync(HttpContext.User);
+			PTimetable PersonalTable = new PTimetable()
+			{
+				CreatedDate = DateTime.Now,
+				UserId = currentUser.Id
+			};
+			// Add PTimetable truoc thi moi add duoc Class vi Id cua PTimetable la foreign key tham chieu den Class
+			_context.Add(PersonalTable);
+			await _context.SaveChangesAsync();
+			foreach (var SelectedClass in SelectedClasses)
+			{
+				var Subject = new Subject();
+				Subject.SubjectName = SelectedClass.SubjectName;
+				Subject.SubjectId = SelectedClass.SubjectId;
+				Subject.ESubjectName = SelectedClass.ESubjectName;
+				Subject.School = SelectedClass.School;
+				Subject.Difficulty = SelectedClass.Difficulty;
+				Subject.EduProgram = SelectedClass.EduProgram;
+				Subject.Experiment = SelectedClass.Experiment;
+				var Class = new Class();
+				Class.TimetableId = PersonalTable.TimetableId;
+				Class.ClassId = SelectedClass.ClassId;
+				Class.AClassId = SelectedClass.AClassId;
+				Class.Term = SelectedClass.Term;
+				Class.Time = SelectedClass.Time;
+				Class.Week = SelectedClass.Week;
+				Class.Weekday = SelectedClass.Weekday;
+				Class.Enrolled = SelectedClass.Enrolled;
+				Class.ClassRoom = SelectedClass.ClassRoom;
+				Class.ClassType = SelectedClass.ClassType;
+				Class.Status = SelectedClass.Status;
+				Class.MaxNumber = SelectedClass.MaxNumber;
+				Class.Note = SelectedClass.Note;
+				Class.SubjectId = SelectedClass.SubjectId;
+				_context.Classes.Add(Class);
+				_context.Subjects.Add(Subject);
+				await _context.SaveChangesAsync();
+			}
+
+			return Json(new { success = true, message = "Success." });
 		}
 		//public IActionResult ClassSearch(string subjectId)
 		//{

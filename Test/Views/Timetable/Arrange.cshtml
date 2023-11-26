@@ -4,7 +4,11 @@
 @{
 	ViewData["Title"] = "Arrange timetable";
 }
-@model List<TempTimetable>;
+@using Microsoft.AspNetCore.Identity
+@using Test.Models
+
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
 <div class="container">
 	<ul class="list-inline">
 		@foreach (var subject in ViewBag.Subjects)
@@ -204,6 +208,15 @@
 				<td></td>
 			</tr>
 			<tr>
+				<td class="align-middle">1705</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
 				<td class="align-middle">1730</td>
 				<td></td>
 				<td></td>
@@ -215,6 +228,10 @@
 		</table>
 	</div>
 </div>
+@if (SignInManager.IsSignedIn(User))
+{
+	<div class="btn btn-success" onclick="saveTimetable()">Save</div>
+}
 
 <script>
 	// Mang thong tin - problems about time.
@@ -257,7 +274,8 @@
 		else if (time == '1550') return 16;
 		else if (time == '1600') return 17;
 		else if (time == '1645') return 18;
-		else if (time == '1730') return 19;
+		else if (time == '1705') return 19;
+		else if (time == '1730') return 20;
 	}
 	
 	function displaySubjects(classData) {
@@ -272,6 +290,14 @@
 				}
 			})
 			return results.join('/');
+		}
+		function findClass(classId) {
+			for (var i = 0; i < classData.length; i++) {
+				if (classData[i].classId == classId) {
+					return classData[i];
+				}
+			}
+			return null;
 		}
 		// Iterate through classData and create div elements for each class
 		classData.forEach(function (classInfo) {
@@ -302,28 +328,28 @@
 				cells.first().append(subjectDiv);
 
 				subjectDiv.on('click', function () {
-					// Check if the subject is not already in the selectedSubjects array
-					// if (!selectedSubjects.some(subject => (subject.subjectName === classInfo.subjectName))) {
-					// 	// Add the selected subject to the global array when clicked
-					// 	selectedSubjects.push({
-					// 		subjectName: classInfo.subjectName,
-					// 		classCode: classCode(classInfo),
-					// 		startTime: startTime,
-					// 		endTime: endTime,
-					// 		weekday: classInfo.weekday
-					// 	});
-					// 	console.log(selectedSubjects);
-						// Update the table with selected subjects
-					console.log(classInfo);
-					updateTable(classInfo, classCode(classInfo));
-					// }
+					// console.log(classCode(classInfo))
+					if (classCode(classInfo).split('/').length > 1) {
+						var classId = prompt("Select one class id: " + classCode(classInfo));
+						var result = findClass(classId);
+						if (classId == null || classId == "" || classCode(classInfo).split('/').indexOf(classId) == -1) {
+							alert("Invalid class id");
+						} else {
+							updateTable(result);
+							selectedSubjects.push(result);
+						}
+					} else {
+						updateTable(classInfo);
+						selectedSubjects.push(classInfo);
+					}
+					console.log(selectedSubjects);
 				});
 			}
 		});
 	}
 
 	
-	function updateTable(classInfo, classCode) {
+	function updateTable(classInfo) {
 		// Clear existing subject display content without the first row and column
 		$('#myTable td[style*="background-color: rgb(224, 244, 255)"]').empty().removeAttr('style').removeAttr('rowspan');
 		var timeSplit = classInfo.time.split('-');
@@ -332,39 +358,63 @@
 		// Iterate through selectedSubjects and add them to the table
 		var cells = $('#myTable tr').slice(startTime, endTime + 1).find('td').eq(classInfo.weekday - 1);
 
+		var subjectContainerDiv = $('<div>')
+			.addClass('selectedSubject btn-container')
+			.css({
+				'position': 'relative', // Set position to relative
+			});
 		// Create a div element for the class
 		var subjectDiv = $('<div>')
-			.html(classInfo.subjectName + '<br>' + classCode)
+			.html(classInfo.subjectName + '<br>' + classInfo.classId + '<br>' + classInfo.classType + '<br>' + classInfo.classRoom)
 			.addClass('selectedSubject btn')
 			.css({
 				'color': '#000000', // Set your desired text color
 				'padding': '5px',
 				'border-radius': '5px',
+				'position': 'relative',
 			});
 		var closeButton = $('<button>')
 			.addClass('btn-close')
 			.on('click', function () {
 				// Handle the close button click event
-				clearCells(cells);
-				
+				clearCells(cells, classInfo);
 			});
 
 		// Append the close button to the subjectDiv
-		subjectDiv.append(closeButton);
+		subjectContainerDiv.append(subjectDiv, closeButton);
 		// Set the rowspan attribute to span the correct duration
 		cells.attr('rowspan', endTime - startTime + 1).css({ 'background-color': '#87C4FF' });
 
 		// Append the div to the first cell in the column
-		cells.first().append(subjectDiv);
-		
-		// selectedSubjects.forEach(function (selectedSubject) {
-				
-				
-		// });
+		cells.first().append(subjectContainerDiv);
+		closeButton.css({
+			'position': 'absolute',
+			'top': '0',
+			'right': '0',
+		});
 		
 	}
-	function clearCells(cells) {
+	function clearCells(cells, classInfo) {
 		cells.empty().removeAttr('style').removeAttr('rowspan');
+		var deleteIndex = selectedSubjects.indexOf(classInfo);
+		selectedSubjects.splice(deleteIndex, 1);
+		console.log(selectedSubjects);
+	}
+	function saveTimetable() {
+		$.ajax({
+			
+			url: '/Timetable/SaveTimetable',
+			type: 'POST', 
+			contentType: 'application/json',
+			data: JSON.stringify(selectedSubjects),
+			success: function (response) {
+				console.log('Selected subjects sent successfully', response);
+				alert('Timetable saved successfully');
+			},
+			error: function (error) {
+				console.error('Error sending selected subjects');
+			}
+		});
 	}
 	
 </script>

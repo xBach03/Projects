@@ -26,19 +26,21 @@ namespace Test.Models
 					entityType.SetTableName(tableName.Substring(6));
 				}
 			}
-			builder.Entity<TempTimetable>().Property(e => e.ClassRoom).IsRequired(false);
-			builder.Entity<TempTimetable>().Property(e => e.Note).IsRequired(false);
-			builder.Entity<TempTimetable>().Property(e => e.ClassType).IsRequired(false);
-			builder.Entity<TempTimetable>().Property(e => e.EduProgram).IsRequired(false);
-			builder.Entity<TempTimetable>().Property(e => e.Week).IsRequired(false);
-			builder.Entity<TempTimetable>().Property(e => e.Experiment).IsRequired(false);
-			builder.Entity<TempTimetable>().Property(e => e.Status).IsRequired(false);
-			builder.Entity<TempTimetable>().Property(e => e.SubjectName).IsRequired(false);
-			builder.Entity<TempTimetable>().Property(e => e.ESubjectName).IsRequired(false);
-			builder.Entity<TempTimetable>().Property(e => e.School).IsRequired(false);
-			builder.Entity<TempTimetable>().Property(e => e.SubjectId).IsRequired(false);
-			builder.Entity<TempTimetable>().Property(e => e.Time).IsRequired(false);
-			builder.Entity<TempTimetable>().Property(e => e.Difficulty).IsRequired(false);
+			//builder.Entity<Subject>().Property(s => s.SubjectId).ValueGeneratedOnAdd();
+			//builder.Entity<Class>().Property(c => c.ClassId).ValueGeneratedOnAdd();
+			builder.Entity<TempTimetable>().Property(t => t.ClassRoom).IsRequired(false);
+			builder.Entity<TempTimetable>().Property(t => t.Note).IsRequired(false);
+			builder.Entity<TempTimetable>().Property(t => t.ClassType).IsRequired(false);
+			builder.Entity<TempTimetable>().Property(t => t.EduProgram).IsRequired(false);
+			builder.Entity<TempTimetable>().Property(t => t.Week).IsRequired(false);
+			builder.Entity<TempTimetable>().Property(t => t.Experiment).IsRequired(false);
+			builder.Entity<TempTimetable>().Property(t => t.Status).IsRequired(false);
+			builder.Entity<TempTimetable>().Property(t => t.SubjectName).IsRequired(false);
+			builder.Entity<TempTimetable>().Property(t => t.ESubjectName).IsRequired(false);
+			builder.Entity<TempTimetable>().Property(t => t.School).IsRequired(false);
+			builder.Entity<TempTimetable>().Property(t => t.SubjectId).IsRequired(false);
+			builder.Entity<TempTimetable>().Property(t => t.Time).IsRequired(false);
+			builder.Entity<TempTimetable>().Property(t => t.Difficulty).IsRequired(false);
 
 		}
 		public DbSet<PTimetable> Timetables { set; get; }

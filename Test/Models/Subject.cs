@@ -7,9 +7,13 @@ namespace Test.Models
 	public class Subject
 	{
 		[Key]
-		public int SubjectId { set; get; }
+		[DatabaseGenerated(DatabaseGeneratedOption.None)]
+		public string SubjectId { set; get; }
 		public string SubjectName { set; get; }
+		public string ESubjectName { set; get; }
+		public string Difficulty { set; get; }
 		public string? School { set; get; }
 		public string EduProgram { set; get; }
+		public string Experiment { set; get; }
 	}
 }
