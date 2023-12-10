@@ -10,6 +10,7 @@ namespace Test.Models
 		[Key]
 		[DatabaseGenerated(DatabaseGeneratedOption.None)]
 		public int ClassId { set; get; }
+		[Key]
 		public int TimetableId { set; get; }
 		[ForeignKey("TimetableId")]
 		public PTimetable pTimetable { set; get; }

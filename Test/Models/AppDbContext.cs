@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection.Emit;
-using Test.Models;
 
 namespace Test.Models
 {
@@ -28,7 +26,7 @@ namespace Test.Models
 			}
 			//builder.Entity<Subject>().Property(s => s.SubjectId).ValueGeneratedOnAdd();
 			//builder.Entity<Class>().Property(c => c.ClassId).ValueGeneratedOnAdd();
-			builder.Entity<TempTimetable>().Property(t => t.ClassRoom).IsRequired(false);
+			builder.Entity<TempTimetable>().Property(t => t.ClassRoom ).IsRequired(false);
 			builder.Entity<TempTimetable>().Property(t => t.Note).IsRequired(false);
 			builder.Entity<TempTimetable>().Property(t => t.ClassType).IsRequired(false);
 			builder.Entity<TempTimetable>().Property(t => t.EduProgram).IsRequired(false);
@@ -41,7 +39,7 @@ namespace Test.Models
 			builder.Entity<TempTimetable>().Property(t => t.SubjectId).IsRequired(false);
 			builder.Entity<TempTimetable>().Property(t => t.Time).IsRequired(false);
 			builder.Entity<TempTimetable>().Property(t => t.Difficulty).IsRequired(false);
-
+			builder.Entity<Class>().HasKey(c => new { c.ClassId, c.TimetableId });
 		}
 		public DbSet<PTimetable> Timetables { set; get; }
 		public DbSet<Class> Classes { set; get; }

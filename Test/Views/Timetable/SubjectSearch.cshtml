@@ -21,13 +21,14 @@
 			@foreach (var subject in ViewBag.SearchHistory)
 			{
 				<tr>
-					<td>@subject.SubjectId: @subject.SubjectName</td>
+					<td>@subject.SubjectId: @subject.SubjectName </td>
+					<td><div class="btn-close"></div></td>
 				</tr>
 			}
 	</tbody>
 </table>
 <div class="text-center">
-	<form>
+	<form> 
 		<div class="active-cyan-4 mb-4">
 			<div>
 				<div class="col-1">

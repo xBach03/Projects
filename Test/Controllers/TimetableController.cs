@@ -118,11 +118,14 @@ namespace Test.Controllers
 			var searchHistoryJson = JsonConvert.SerializeObject(searchHistory);
 			HttpContext.Session.SetString("SearchHistory", searchHistoryJson);
 		}
-		public IActionResult SubjectSearch()
+		public IActionResult subjectSearch(string subjectId)
 		{
-			var searchHistory = GetSearchHistory();
-			ViewBag.SearchHistory = searchHistory;
-			return View();
+			var result = _context.TempTables.FirstOrDefault(t => t.SubjectId == subjectId);
+			if(result != null)
+			{
+				return Json(result);
+			}
+			return Json(null);
 		}
 		[HttpPost]
 		public IActionResult SubjectSearch(string Subject)
@@ -138,38 +141,10 @@ namespace Test.Controllers
 			ViewBag.SearchHistory = GetSearchHistory();
 			return View();
 		}
-		private List<TempTimetable> GetClasses()
-		{
-			var classSearchJson = HttpContext.Session.GetString("Class");
-			var classSearch = classSearchJson != null ? JsonConvert.DeserializeObject<List<TempTimetable>>(classSearchJson) : new List<TempTimetable>();
-			return classSearch;
-		}
-		private void AddClass(List<TempTimetable> newClasses)
-		{
-			var classes = GetClasses();
-			if (classes.Any(s => s.ClassId == newClasses.First().ClassId))
-			{
-				return;
-			} else
-			{
-				foreach(var newClass in newClasses)
-				{
-					classes.Add(newClass);
-				}
-			}
-			var classesJson = JsonConvert.SerializeObject(classes);
-			HttpContext.Session.SetString("Class", classesJson);
-		}
 		public IActionResult Arrange()
 		{
 			_logger.LogInformation("Arrange post action");
 			ViewBag.Subjects = GetSearchHistory();
-			foreach(var subject in GetSearchHistory())
-			{
-				var search = _context.TempTables.Where(row => row.SubjectId == subject.SubjectId).ToList();
-				if (search != null) AddClass(search);
-			}
-			ViewBag.Class = GetClasses();
 			return View();
 		}
 		[HttpGet]
@@ -202,14 +177,19 @@ namespace Test.Controllers
 			foreach (var SelectedClass in SelectedClasses)
 			{
 				var Subject = new Subject();
-				Subject.SubjectName = SelectedClass.SubjectName;
-				Subject.SubjectId = SelectedClass.SubjectId;
-				Subject.ESubjectName = SelectedClass.ESubjectName;
-				Subject.School = SelectedClass.School;
-				Subject.Difficulty = SelectedClass.Difficulty;
-				Subject.EduProgram = SelectedClass.EduProgram;
-				Subject.Experiment = SelectedClass.Experiment;
 				var Class = new Class();
+				if (!_context.Subjects.Any(s => s.SubjectId == SelectedClass.SubjectId))
+				{
+
+					Subject.SubjectName = SelectedClass.SubjectName;
+					Subject.SubjectId = SelectedClass.SubjectId;
+					Subject.ESubjectName = SelectedClass.ESubjectName;
+					Subject.School = SelectedClass.School;
+					Subject.Difficulty = SelectedClass.Difficulty;
+					Subject.EduProgram = SelectedClass.EduProgram;
+					Subject.Experiment = SelectedClass.Experiment;
+					_context.Subjects.Add(Subject);
+				}
 				Class.TimetableId = PersonalTable.TimetableId;
 				Class.ClassId = SelectedClass.ClassId;
 				Class.AClassId = SelectedClass.AClassId;
@@ -225,17 +205,10 @@ namespace Test.Controllers
 				Class.Note = SelectedClass.Note;
 				Class.SubjectId = SelectedClass.SubjectId;
 				_context.Classes.Add(Class);
-				_context.Subjects.Add(Subject);
 				await _context.SaveChangesAsync();
 			}
 
 			return Json(new { success = true, message = "Success." });
 		}
-		//public IActionResult ClassSearch(string subjectId)
-		//{
-		//	var search = _context.TempTables.Where(row => row.SubjectId == subjectId).ToList();
-		//	if (search != null) AddClass(search);
-		//	return Json(search);
-		//}
 	}
 }

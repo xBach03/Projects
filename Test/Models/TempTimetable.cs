@@ -21,8 +21,6 @@ namespace Test.Models
 		public string Difficulty { set; get; }
 		public string Note { set; get; }
 		public string Time { set; get; }
-		//public string Start { set; get; }
-		//public string End { set; get; }
 		public string ClassRoom { set; get; }
 		public string ClassType { set; get; }
 		public string EduProgram { set; get; }

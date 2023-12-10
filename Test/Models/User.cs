@@ -8,10 +8,6 @@ namespace Test.Models
 	public class User : IdentityUser
 	{
 		public string? Class { set; get; }
-
 		public string? Major { set; get; }
-
-
-
 	}
 }
