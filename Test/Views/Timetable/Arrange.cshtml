@@ -19,8 +19,18 @@
 			}
 	</ul>
 </div>
+@* <div class="container">
+	<ul class="list-inline">
+		@foreach (var subject in ViewBag.SelectedSubjects)
+		{
+			<li class="list-inline-item">
+				<button class="mt-2 btn btn-primary">@subject</button>
+			</li>
+		}
+	</ul>
+</div> *@
 <div class="container">
-	<div class="table-responsive">
+	<div>
 		<table class="table table-bordered text-center" id="myTable">
 			<tr class="bg-light-gray">
 				<td class="text-uppercase">time</td>
@@ -218,7 +228,7 @@
 {
 	<div class="btn btn-success" onclick="saveTimetable()">Save</div>
 }
-<script src="~/js/site.js" asp-append-version="true"></script>
+<script src="~/js/Timetable.js" asp-append-version="true"></script>
 
 
 
