@@ -98,6 +98,14 @@ namespace Test.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+
+            [Required]
+            [Display(Name = "Course (Example: K66)")]
+            public string Course { set; get; }
+            [Required]
+            [Display(Name = "Major (Example: ET1)")]
+            public string Major { set; get; }
+
         }
 
 
@@ -142,6 +150,7 @@ namespace Test.Areas.Identity.Pages.Account
                     else
                     {
                         await _signInManager.SignInAsync(user, isPersistent: false);
+                        // Neu returnUrl == null thi ung dung se chuyen huong den trang goc - chinh la trang Index
                         return LocalRedirect(returnUrl);
                     }
                 }
@@ -159,7 +168,10 @@ namespace Test.Areas.Identity.Pages.Account
         {
             try
             {
-                return Activator.CreateInstance<User>();
+                var user = Activator.CreateInstance<User>();
+                user.Course = Input.Course;
+                user.Major = Input.Major;
+                return user;
             }
             catch
             {
