@@ -26,7 +26,7 @@ namespace Test.Models
 			}
 			//builder.Entity<Subject>().Property(s => s.SubjectId).ValueGeneratedOnAdd();
 			//builder.Entity<Class>().Property(c => c.ClassId).ValueGeneratedOnAdd();
-			builder.Entity<TempTimetable>().Property(t => t.ClassRoom ).IsRequired(false);
+			builder.Entity<TempTimetable>().Property(t => t.ClassRoom).IsRequired(false);
 			builder.Entity<TempTimetable>().Property(t => t.Note).IsRequired(false);
 			builder.Entity<TempTimetable>().Property(t => t.ClassType).IsRequired(false);
 			builder.Entity<TempTimetable>().Property(t => t.EduProgram).IsRequired(false);
@@ -39,11 +39,21 @@ namespace Test.Models
 			builder.Entity<TempTimetable>().Property(t => t.SubjectId).IsRequired(false);
 			builder.Entity<TempTimetable>().Property(t => t.Time).IsRequired(false);
 			builder.Entity<TempTimetable>().Property(t => t.Difficulty).IsRequired(false);
-			builder.Entity<Class>().HasKey(c => new { c.ClassId, c.TimetableId });
+			builder.Entity<TempTimetable>().Property(t => t.Shift).IsRequired(false);
+			builder.Entity<TempTimetable>().Property(t => t.OpenStage).IsRequired(false);
+			builder.Entity<Class>().Property(c => c.Experiment).IsRequired(false);
+			builder.Entity<Class>().Property(c => c.Note).IsRequired(false);
+			builder.Entity<Class>().Property(c => c.Enrolled).IsRequired(false);
+			builder.Entity<Class>().Property(c => c.OpenStage).IsRequired(false);
+
+			builder.Entity<ClassTime>().HasKey(c => new { c.ClassId, c.DateCount });
+			builder.Entity<ClassUser>().HasKey(c => new { c.ClassId, c.TimetableId });
 		}
 		public DbSet<PTimetable> Timetables { set; get; }
 		public DbSet<Class> Classes { set; get; }
+		public DbSet<ClassTime> ClassTime { set; get; }
 		public DbSet<Subject> Subjects { set; get; }
+		public DbSet<ClassUser> ClassUser { set; get; }
 		public DbSet<TempTimetable> TempTables { set; get; }
 	}
 }

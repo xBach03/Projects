@@ -25,7 +25,6 @@ namespace Test
 			{
 
 			});
-
 			// Them vao dich vu Identity voi cau hinh mac dinh cho User
 			// Them trien khai Entity Framework luu tru du lieu ve Indentity
 			// Them token provider de phat sinh token (reset password, reset email...)
@@ -76,13 +75,12 @@ namespace Test
 				// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
 				app.UseHsts();
 			}
-			
 
 			app.UseHttpsRedirection();
 			app.UseStaticFiles();
 
 			app.UseRouting();
-			app.UseAuthentication(); ;
+			app.UseAuthentication(); 
 
 			app.UseAuthorization();
 			app.UseSession();

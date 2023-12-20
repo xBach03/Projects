@@ -21,7 +21,6 @@ namespace Test.Controllers
 		public IActionResult Index()
 		{
 			_logger.LogInformation("Timetable Index");
-			//_logger.LogInformation(excelData.Count.ToString());
 			return View();
 		}
 		public IActionResult ExcelReader()
@@ -74,8 +73,12 @@ namespace Test.Controllers
 								table.ESubjectName = reader.GetValue(6).ToString();
 								table.Difficulty = reader.GetValue(7).ToString();
 								table.Note = reader.GetValue(8).ToString();
+								table.DateCount = int.TryParse(reader.GetValue(9).ToString(), out number) ? number : 0;
 								table.Weekday = int.TryParse(reader.GetValue(10).ToString(), out number) ? number : 0;
 								table.Time = reader.GetValue(11).ToString();
+								table.Start = int.TryParse(reader.GetValue(12).ToString(), out number) ? number : 0;
+								table.End = int.TryParse(reader.GetValue(13).ToString(), out number) ? number : 0;
+								table.Shift = reader.GetValue(14).ToString();
 								table.Week = reader.GetValue(15).ToString();
 								table.ClassRoom = reader.GetValue(16).ToString();
 								table.Experiment = reader.GetValue(17).ToString();
@@ -83,6 +86,7 @@ namespace Test.Controllers
 								table.MaxNumber = int.TryParse(reader.GetValue(19).ToString(), out number) ? number : 0;
 								table.Status = reader.GetValue(20).ToString();
 								table.ClassType = reader.GetValue(21).ToString();
+								table.OpenStage = reader.GetValue(22).ToString();
 								table.EduProgram = reader.GetValue(23).ToString();
 								_context.TempTables.Add(table);
 								await _context.SaveChangesAsync();
@@ -92,59 +96,63 @@ namespace Test.Controllers
 						
 					}
 				}
-
 			}
 			return View();
 		}
-		private List<TempTimetable> GetSearchHistory()
+		public IActionResult SubjectSearch(string subjectId)
+		{
+			var result = _context.TempTables.FirstOrDefault(t => t.SubjectId == subjectId);
+			if (result != null)
+			{
+				return Json(result);
+			}
+			return Json("No subject found");
+		}
+		private List<string> GetSearchHistory()
 		{
 			// chuoi json dc tra ve SearchHistoryJson 
 			var SearchHistoryJson = HttpContext.Session.GetString("SearchHistory");
 			// DeserializeObject chuyen chuoi json thanh 1 doi tuong List<List<TempTimetable>>
-			var searchHistory = SearchHistoryJson != null ? JsonConvert.DeserializeObject<List<TempTimetable>>(SearchHistoryJson) : new List<TempTimetable>();
+			var searchHistory = SearchHistoryJson != null ? JsonConvert.DeserializeObject<List<string>>(SearchHistoryJson) : new List<string>();
 			return searchHistory;
 		}
-
-		private void AddToSearchHistory(TempTimetable currentResult)
+		private void AddToSearchHistory(List<string> SearchResult)
 		{
 			var searchHistory = GetSearchHistory();
-			if (searchHistory.Any(s => s.SubjectId == currentResult.SubjectId))
+			searchHistory.Clear();
+			foreach (var Subject in SearchResult)
 			{
-				return;
-			} else
-			{
-				searchHistory.Add(currentResult);
+				searchHistory.Add(Subject);
 			}
 			var searchHistoryJson = JsonConvert.SerializeObject(searchHistory);
 			HttpContext.Session.SetString("SearchHistory", searchHistoryJson);
 		}
-		public IActionResult subjectSearch(string subjectId)
-		{
-			var result = _context.TempTables.FirstOrDefault(t => t.SubjectId == subjectId);
-			if(result != null)
-			{
-				return Json(result);
-			}
-			return Json(null);
-		}
-		[HttpPost]
-		public IActionResult SubjectSearch(string Subject)
-		{
 
-			_logger.LogInformation("SubjectSearch");
-			if(_context.Subjects == null)
-			{
-				return Problem("Context is null");
-			}
-			var result = _context.TempTables.FirstOrDefault(row => row.SubjectId == Subject);
-			if(result != null) AddToSearchHistory(result);
-			ViewBag.SearchHistory = GetSearchHistory();
-			return View();
+		[HttpPost]
+		public IActionResult SubjectList([FromBody] List<string> SelectedSubjects)
+		{
+			_logger.LogInformation("SubjectList action");
+			AddToSearchHistory(SelectedSubjects);
+			return Json(Url.Action("Arrange"));
 		}
 		public IActionResult Arrange()
 		{
-			_logger.LogInformation("Arrange post action");
-			ViewBag.Subjects = GetSearchHistory();
+			_logger.LogInformation("Arrange action");
+			var SelectedSubjects = GetSearchHistory();
+			//foreach(var subject in SelectedSubjects)
+			//{
+			//	_logger.LogInformation(subject);
+			//}
+			var subjectList = new List<TempTimetable>();
+			foreach (var Subject in SelectedSubjects)
+			{
+				var result = _context.TempTables.FirstOrDefault(s => s.SubjectId == Subject);
+				if (result != null)
+				{
+					subjectList.Add(result);
+				}
+			}
+			ViewBag.Subjects = subjectList;
 			return View();
 		}
 		[HttpGet]
@@ -169,45 +177,70 @@ namespace Test.Controllers
 			PTimetable PersonalTable = new PTimetable()
 			{
 				CreatedDate = DateTime.Now,
-				UserId = currentUser.Id
+				UserId = currentUser.Id,
 			};
-			// Add PTimetable truoc thi moi add duoc Class vi Id cua PTimetable la foreign key tham chieu den Class
-			_context.Add(PersonalTable);
+			_context.Timetables.Add(PersonalTable);
 			await _context.SaveChangesAsync();
+			// Add PTimetable truoc thi moi add duoc Class vi Id cua PTimetable la foreign key tham chieu den Class
 			foreach (var SelectedClass in SelectedClasses)
 			{
-				var Subject = new Subject();
-				var Class = new Class();
+				ClassUser classUser = new ClassUser()
+				{
+					ClassId = SelectedClass.ClassId,
+					TimetableId = PersonalTable.TimetableId
+				};
+				_context.ClassUser.Add(classUser);
 				if (!_context.Subjects.Any(s => s.SubjectId == SelectedClass.SubjectId))
 				{
-
-					Subject.SubjectName = SelectedClass.SubjectName;
-					Subject.SubjectId = SelectedClass.SubjectId;
-					Subject.ESubjectName = SelectedClass.ESubjectName;
-					Subject.School = SelectedClass.School;
-					Subject.Difficulty = SelectedClass.Difficulty;
-					Subject.EduProgram = SelectedClass.EduProgram;
-					Subject.Experiment = SelectedClass.Experiment;
+					var Subject = new Subject()
+					{
+						SubjectName = SelectedClass.SubjectName,
+						SubjectId = SelectedClass.SubjectId,
+						ESubjectName = SelectedClass.ESubjectName,
+						School = SelectedClass.School,
+						Difficulty = SelectedClass.Difficulty,
+						EduProgram = SelectedClass.EduProgram,
+						Term = SelectedClass.Term
+					};
 					_context.Subjects.Add(Subject);
 				}
-				Class.TimetableId = PersonalTable.TimetableId;
-				Class.ClassId = SelectedClass.ClassId;
-				Class.AClassId = SelectedClass.AClassId;
-				Class.Term = SelectedClass.Term;
-				Class.Time = SelectedClass.Time;
-				Class.Week = SelectedClass.Week;
-				Class.Weekday = SelectedClass.Weekday;
-				Class.Enrolled = SelectedClass.Enrolled;
-				Class.ClassRoom = SelectedClass.ClassRoom;
-				Class.ClassType = SelectedClass.ClassType;
-				Class.Status = SelectedClass.Status;
-				Class.MaxNumber = SelectedClass.MaxNumber;
-				Class.Note = SelectedClass.Note;
-				Class.SubjectId = SelectedClass.SubjectId;
-				_context.Classes.Add(Class);
+				if(!_context.ClassTime.Any(c => c.ClassId == SelectedClass.ClassId && c.DateCount == SelectedClass.DateCount))
+				{
+					var ClassTime = new ClassTime()
+					{
+						ClassId = SelectedClass.ClassId,
+						DateCount = SelectedClass.DateCount,
+						Time = SelectedClass.Time,
+						Start = SelectedClass.Start,
+						End = SelectedClass.End,
+						Shift = SelectedClass.Shift,
+						Week = SelectedClass.Week,
+						Weekday = SelectedClass.Weekday,
+						ClassRoom = SelectedClass.ClassRoom
+					};
+					_context.ClassTime.Add(ClassTime);
+				}
+				if(!_context.Classes.Any(c => c.ClassId == SelectedClass.ClassId))
+				{
+					var Class = new Class()
+					{
+						ClassId = SelectedClass.ClassId,
+						AClassId = SelectedClass.AClassId,
+						SubjectId = SelectedClass.SubjectId,
+						Enrolled = SelectedClass.Enrolled,
+						ClassType = SelectedClass.ClassType,
+						Status = SelectedClass.Status,
+						MaxNumber = SelectedClass.MaxNumber,
+						Note = SelectedClass.Note,
+						Experiment = SelectedClass.Experiment,
+						OpenStage = SelectedClass.OpenStage
+					};
+					
+					_context.Classes.Add(Class);
+				}
 				await _context.SaveChangesAsync();
 			}
-
+			
 			return Json(new { success = true, message = "Success." });
 		}
 	}

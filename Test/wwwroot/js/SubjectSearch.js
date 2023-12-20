@@ -1,28 +1,57 @@
+var selectedSubjects = [];
 function subjectSearch() {
 	var subjectId = document.getElementById("Subject").value;
-	console.log(subjectId);
 	$.ajax({
-		url: '/TimeTable/subjectSearch',
+		url: '/TimeTable/SubjectSearch',
 		type: 'GET',
-		datatype: 'json',
+		dataType: 'json',
 		data: { subjectId: subjectId },
 		success: function (classData) {
-			// console.log(classData);
-			// classData.forEach(function (classInfo) {
-			// 	console.log(classInfo.time);
-			// })
-			displaySubjects(classData);
-			console.log(classData);
+
+			if (selectedSubjects.indexOf(classData.subjectId) == -1) {
+				selectedSubjects.push(classData.subjectId);
+				displaySubjects(classData);
+			}
 		},
 		error: function (error) {
 			console.log('Error fetching class data:', error);
 		}
 	});
 }
+var div = document.getElementById("div1");
 var table = document.createElement("table");
-document.body.appendChild(table);
+table.setAttribute('class', 'table');
+table.setAttribute('id', 'myTable')
+div.appendChild(table);
 function displaySubjects(classData) {
 	var row = table.insertRow();
 	var cell = row.insertCell();
 	cell.innerHTML = classData.subjectId + ": " + classData.subjectName;
+	row.setAttribute('id', classData.subjectId);
+	var closebutton = document.createElement('button');
+	closebutton.setAttribute('class', 'btn-close');
+	closebutton.onclick = function clearSubject() {
+		document.getElementById(classData.subjectId).remove();
+		selectedSubjects.splice(selectedSubjects.indexOf(classData.subjectId), 1);
+		
+	};
+	cell.appendChild(closebutton);
+	console.log(selectedSubjects);
+}
+function subjectList() {
+	$.ajax({
+		url: '/Timetable/SubjectList',
+		type: 'POST',
+		contentType: 'application/json',
+		dataType: 'json',
+		data: JSON.stringify(selectedSubjects),
+		success: function (response) {
+			console.log(response);
+			// Chuyen huong sang trang Arrange
+			window.location.href = response;
+		},
+		error: function (error) {
+			console.log(error);
+		}
+	});
 }
