@@ -78,7 +78,7 @@ namespace Test.Controllers
 								table.Time = reader.GetValue(11).ToString();
 								table.Start = int.TryParse(reader.GetValue(12).ToString(), out number) ? number : 0;
 								table.End = int.TryParse(reader.GetValue(13).ToString(), out number) ? number : 0;
-								table.Shift = reader.GetValue(14).ToString();
+								table.Shift = reader.GetValue(14) == null? null : reader.GetValue(14).ToString();
 								table.Week = reader.GetValue(15).ToString();
 								table.ClassRoom = reader.GetValue(16).ToString();
 								table.Experiment = reader.GetValue(17).ToString();
@@ -88,7 +88,7 @@ namespace Test.Controllers
 								table.ClassType = reader.GetValue(21).ToString();
 								table.OpenStage = reader.GetValue(22).ToString();
 								table.EduProgram = reader.GetValue(23).ToString();
-								_context.TempTables.Add(table);
+								_context.TempTable.Add(table);
 								await _context.SaveChangesAsync();
 								
 							}
@@ -99,9 +99,10 @@ namespace Test.Controllers
 			}
 			return View();
 		}
+		[HttpGet]
 		public IActionResult SubjectSearch(string subjectId)
 		{
-			var result = _context.TempTables.FirstOrDefault(t => t.SubjectId == subjectId);
+			var result = _context.TempTable.FirstOrDefault(t => t.SubjectId.ToLower() == subjectId.ToLower());
 			if (result != null)
 			{
 				return Json(result);
@@ -146,7 +147,7 @@ namespace Test.Controllers
 			var subjectList = new List<TempTimetable>();
 			foreach (var Subject in SelectedSubjects)
 			{
-				var result = _context.TempTables.FirstOrDefault(s => s.SubjectId == Subject);
+				var result = _context.TempTable.FirstOrDefault(s => s.SubjectId.ToLower() == Subject.ToLower());
 				if (result != null)
 				{
 					subjectList.Add(result);
@@ -159,9 +160,9 @@ namespace Test.Controllers
 		public IActionResult GetClassesBySubjectId(string subjectId)
 		{
 			var result = new List<TempTimetable>();
-			foreach(var Class in _context.TempTables)
+			foreach(var Class in _context.TempTable)
 			{
-				if(Class.SubjectId == subjectId)
+				if(Class.SubjectId.ToLower() == subjectId.ToLower())
 				{
 					result.Add(Class);
 				}
@@ -179,18 +180,24 @@ namespace Test.Controllers
 				CreatedDate = DateTime.Now,
 				UserId = currentUser.Id,
 			};
-			_context.Timetables.Add(PersonalTable);
+			_context.Timetable.Add(PersonalTable);
 			await _context.SaveChangesAsync();
 			// Add PTimetable truoc thi moi add duoc Class vi Id cua PTimetable la foreign key tham chieu den Class
 			foreach (var SelectedClass in SelectedClasses)
 			{
-				ClassUser classUser = new ClassUser()
+				ClassTb classTb = new ClassTb()
 				{
 					ClassId = SelectedClass.ClassId,
 					TimetableId = PersonalTable.TimetableId
 				};
+				_context.ClassTb.Add(classTb);
+				ClassUser classUser = new ClassUser()
+				{
+					ClassId = SelectedClass.ClassId,
+					UserId = currentUser.Id
+				};
 				_context.ClassUser.Add(classUser);
-				if (!_context.Subjects.Any(s => s.SubjectId == SelectedClass.SubjectId))
+				if (!_context.Subject.Any(s => s.SubjectId == SelectedClass.SubjectId))
 				{
 					var Subject = new Subject()
 					{
@@ -200,9 +207,8 @@ namespace Test.Controllers
 						School = SelectedClass.School,
 						Difficulty = SelectedClass.Difficulty,
 						EduProgram = SelectedClass.EduProgram,
-						Term = SelectedClass.Term
 					};
-					_context.Subjects.Add(Subject);
+					_context.Subject.Add(Subject);
 				}
 				if(!_context.ClassTime.Any(c => c.ClassId == SelectedClass.ClassId && c.DateCount == SelectedClass.DateCount))
 				{
@@ -220,7 +226,7 @@ namespace Test.Controllers
 					};
 					_context.ClassTime.Add(ClassTime);
 				}
-				if(!_context.Classes.Any(c => c.ClassId == SelectedClass.ClassId))
+				if(!_context.Class.Any(c => c.ClassId == SelectedClass.ClassId))
 				{
 					var Class = new Class()
 					{
@@ -233,10 +239,11 @@ namespace Test.Controllers
 						MaxNumber = SelectedClass.MaxNumber,
 						Note = SelectedClass.Note,
 						Experiment = SelectedClass.Experiment,
-						OpenStage = SelectedClass.OpenStage
-					};
+						OpenStage = SelectedClass.OpenStage,
+                        Term = SelectedClass.Term
+                    };
 					
-					_context.Classes.Add(Class);
+					_context.Class.Add(Class);
 				}
 				await _context.SaveChangesAsync();
 			}

@@ -41,19 +41,24 @@ namespace Test.Models
 			builder.Entity<TempTimetable>().Property(t => t.Difficulty).IsRequired(false);
 			builder.Entity<TempTimetable>().Property(t => t.Shift).IsRequired(false);
 			builder.Entity<TempTimetable>().Property(t => t.OpenStage).IsRequired(false);
+
 			builder.Entity<Class>().Property(c => c.Experiment).IsRequired(false);
 			builder.Entity<Class>().Property(c => c.Note).IsRequired(false);
 			builder.Entity<Class>().Property(c => c.Enrolled).IsRequired(false);
 			builder.Entity<Class>().Property(c => c.OpenStage).IsRequired(false);
 
 			builder.Entity<ClassTime>().HasKey(c => new { c.ClassId, c.DateCount });
-			builder.Entity<ClassUser>().HasKey(c => new { c.ClassId, c.TimetableId });
+
+			builder.Entity<ClassTb>().HasKey(c => new { c.ClassId, c.TimetableId });
+
+			builder.Entity<ClassUser>().HasKey(c => new { c.ClassId, c.UserId });
 		}
-		public DbSet<PTimetable> Timetables { set; get; }
-		public DbSet<Class> Classes { set; get; }
+		public DbSet<PTimetable> Timetable { set; get; }
+		public DbSet<Class> Class { set; get; }
 		public DbSet<ClassTime> ClassTime { set; get; }
-		public DbSet<Subject> Subjects { set; get; }
+		public DbSet<Subject> Subject { set; get; }
+		public DbSet<ClassTb> ClassTb { set; get; }
 		public DbSet<ClassUser> ClassUser { set; get; }
-		public DbSet<TempTimetable> TempTables { set; get; }
+		public DbSet<TempTimetable> TempTable { set; get; }
 	}
 }

@@ -8,7 +8,6 @@ namespace Test.Models
 	{
 		[Key]
 		public string SubjectId { set; get; }
-		public int Term { set; get; }
 		public string? School { set; get; }
 		public string SubjectName { set; get; }
 		public string ESubjectName { set; get; }
