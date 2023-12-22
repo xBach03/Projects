@@ -10,7 +10,8 @@ namespace Test.Models
 		[Key]
 		[DatabaseGenerated(DatabaseGeneratedOption.None)]
 		public int ClassId { set; get; }
-		public int? AClassId { set; get; }
+        public int Term { set; get; }
+        public int? AClassId { set; get; }
 		public string SubjectId { set; get; }
 		[ForeignKey("SubjectId")]
 		public Subject subject { set; get; }

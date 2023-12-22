@@ -7,9 +7,8 @@
 			type: 'GET',
 			dataType: 'json',
 			data: { userName: userName },
-			success: function (usersData) {
-				console.log(usersData);
-				displayUser(usersData);
+			success: function (url) {
+				window.location.href = url;
 			},
 			error: function (error) {
 				console.log(error);
@@ -29,17 +28,7 @@
 			}
 		});
 	}
-	
 }
-function displayUser(usersData) {
-	var div = document.getElementById("displayer");
-	var table = document.createElement("table");
-	table.setAttribute('class', 'table');
-	table.setAttribute('id', 'myTable')
-	div.appendChild(table);
-	usersData.forEach(function (userData) {
-		var row = table.insertRow();
-		var cell = row.insertCell();
-		cell.innerHTML = userData.userName + " - " + userData.major + " - " + userData.course;
-	});
+function displayTable(timetableId) {
+
 }
