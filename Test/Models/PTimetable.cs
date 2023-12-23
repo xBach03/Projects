@@ -13,6 +13,7 @@ namespace Test.Models
 		public string UserId { set; get; }
 		[ForeignKey("UserId")]
 		public User User { set; get; }
+		public int Term { set; get; }
 
 	}
 }

@@ -33,7 +33,7 @@ namespace Test.Controllers
 			_logger.LogInformation("ExcelReader");
 			System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
 			// Upload file
-			
+			const int batchSize = 1000;
 			if (file != null && file.Length > 0)
 			{
 				var uploadDirectory = $"{Directory.GetCurrentDirectory()}\\wwwroot\\Uploads";
@@ -89,8 +89,11 @@ namespace Test.Controllers
 								table.OpenStage = reader.GetValue(22).ToString();
 								table.EduProgram = reader.GetValue(23).ToString();
 								_context.TempTable.Add(table);
-								await _context.SaveChangesAsync();
-								
+								if (_context.TempTable.Local.Count % batchSize == 0)
+								{
+									await _context.SaveChangesAsync();
+								}
+
 							}
 						} while (reader.NextResult());
 						
@@ -179,6 +182,7 @@ namespace Test.Controllers
 			{
 				CreatedDate = DateTime.Now,
 				UserId = currentUser.Id,
+				Term = SelectedClasses.First().Term
 			};
 			_context.Timetable.Add(PersonalTable);
 			await _context.SaveChangesAsync();

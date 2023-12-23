@@ -33,16 +33,5 @@ namespace Test.Models
 		public string OpenStage { set; get; }
 		public string EduProgram { set; get; }
 
-
-
-
-
-
-
-
-
-
-
-
 	}
 }
