@@ -1,14 +1,19 @@
-﻿function userSearch(){
-	var userName = document.getElementById("userName").value;
+﻿function dataSearch(){
+	var searchData = document.getElementById("searchData").value;
 	var selected = $("input[name='flexRadioDefault']:checked").val();
 	if (selected == 'users') {
 		$.ajax({
 			url: '/Search/UserSearch',
 			type: 'GET',
 			dataType: 'json',
-			data: { userName: userName },
+			data: { searchData: searchData },
 			success: function (url) {
-				window.location.href = url;
+				if (url == "No user found") {
+					alert(url);
+				} else {
+					window.location.href = url;
+				}
+				
 			},
 			error: function (error) {
 				console.log(error);
@@ -20,12 +25,15 @@
 			url: '/Search/TermSearch',
 			type: 'GET',
 			dataType: 'json',
-			data: { term: term },
-			success: function (timetableTerm) {
-				console.log(timetableTerm);
-			},
-			error: function (error) {
-				console.log(error);
+
+			data: { searchData: searchData },
+			success: function (url) {
+				if (url == "No timetable found") {
+					alert(url)
+				} else {
+					window.location.href = url;
+				}
+
 			}
 		});
 	}

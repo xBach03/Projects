@@ -8,7 +8,10 @@ function subjectSearch() {
 		data: { subjectId: subjectId },
 		success: function (classData) {
 
-			if (selectedSubjects.indexOf(classData.subjectId) == -1) {
+			if (classData == "No subject found") {
+				alert(classData);
+			}
+			else if (selectedSubjects.indexOf(classData.subjectId) == -1) {
 				selectedSubjects.push(classData.subjectId);
 				displaySubjects(classData);
 			}

@@ -4,12 +4,12 @@
 @{
     ViewData["Title"] = "Search engine";
 }
-<h1>Search result</h1>
+<h1>User search result</h1>
 @{
     string UserName = ViewBag.User;
 }
 <h2>User: @UserName</h2>
 @foreach(var Timetable in ViewBag.Timetables)
 {
-    <h3><a href="@($"https://localhost:7077/Search/DisplayTable?timetableId={@Timetable.TimetableId}")">Timetable Id: @Timetable.TimetableId - CreatedDate: @Timetable.CreatedDate</a></h3>
+    <h3><a href="@($"https://localhost:7077/Search/DisplayTable?timetableId={@Timetable.TimetableId}")">Timetable Id: @Timetable.TimetableId - Term: @Timetable.Term - CreatedDate: @Timetable.CreatedDate</a></h3>
 }

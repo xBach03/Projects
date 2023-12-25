@@ -20,15 +20,15 @@ namespace Test.Controllers
 			return View();
 		}
 		[HttpGet]
-		public IActionResult UserSearch(string userName)
+		public IActionResult UserSearch(string searchData)
 		{
 			_logger.LogInformation("UserSearch action");
-			User? User = _context.Users.FromSqlInterpolated($"SELECT * FROM [Test].[dbo].[Users] WHERE [UserName] = {userName}").FirstOrDefault();
+			User? User = _context.Users.FromSqlInterpolated($"SELECT * FROM [Test].[dbo].[Users] WHERE [UserName] = {searchData}").FirstOrDefault();
 			if(User != null)
 			{
-                string url = Url.Action("DisplayUser") + $"?userId={User.Id}";
-                return Json(url);
-            }
+				string url = Url.Action("DisplayUser") + $"?userId={User.Id}";
+				return Json(url);
+			}
 			else
 			{
 				return Json("No user found");
@@ -57,18 +57,18 @@ namespace Test.Controllers
 			ViewBag.User = User?.UserName;
 			return View();
 		}
-        public class QueriedClass
-        {
-            public int ClassId { set; get; }
-            public string? SubjectId { set; get; }
-            public string? SubjectName { set; get; }
+		public class QueriedClass
+		{
+			public int ClassId { set; get; }
+			public string? SubjectId { set; get; }
+			public string? SubjectName { set; get; }
 			public string? ClassType { set; get; }
 			public string? ClassRoom { set; get; }
 			public int Weekday { set; get; }
 			public string? Time { set; get; }
 
-        }
-        public IActionResult DisplayTable(int timetableId)
+		}
+		public IActionResult DisplayTable(int timetableId)
 		{
 			List<ClassTb> ClassTb = _context.ClassTb.FromSqlInterpolated
 				(
@@ -77,7 +77,7 @@ namespace Test.Controllers
 					WHERE ct.[TimetableId] = {timetableId}"
 				).ToList();
 			List<QueriedClass> ResultClass = new List<QueriedClass>();
-			foreach(var ClassCell in ClassTb)
+			foreach (var ClassCell in ClassTb)
 			{
 				Class? QueryClass = _context.Class.FromSqlInterpolated
 					(
@@ -97,7 +97,7 @@ namespace Test.Controllers
 						FROM [Test].[dbo].[ClassTime]
 						WHERE [ClassId] = {ClassCell.ClassId}"
 					).ToList();
-				foreach(var QueriedClassTime in QueryClassTime)
+				foreach (var QueriedClassTime in QueryClassTime)
 				{
 					var Class = new QueriedClass()
 					{
@@ -116,6 +116,7 @@ namespace Test.Controllers
 			ViewBag.ResultClass = JsonResult;
 			return View();
 		}
+
 		//[HttpGet]
 		//public IActionResult TermSearch(int Term)
 		//{
@@ -128,5 +129,44 @@ namespace Test.Controllers
 
 		//	return Json();
 		//}
+
+		public IActionResult TermSearch(int searchData)
+		{
+			var Timetables = _context.Timetable.FromSqlInterpolated(
+				$@"SELECT *
+					FROM [Test].[dbo].[Timetable]
+					WHERE [Term] = {searchData}"
+				).FirstOrDefault();
+			
+			if(Timetables != null)
+			{
+				string url = Url.Action("DisplayTerm") + $"?Term={searchData}";
+				return Json(url);
+			}
+			return Json("No timetable found");
+		}
+		public IActionResult DisplayTerm(int Term)
+		{
+			var Timetables = _context.Timetable.FromSqlInterpolated(
+				$@"SELECT *
+					FROM [Test].[dbo].[Timetable]
+					WHERE [Term] = {Term}"
+				).ToList();
+			var UserNames = _context.Users.FromSqlInterpolated(
+				$@"SELECT *
+					FROM [Test].[dbo].[Users]
+					WHERE [Id] IN 
+						(
+							SELECT DISTINCT [UserId]
+							FROM [Test].[dbo].[Timetable]
+							WHERE [Term] = {Term}
+						)"
+				).ToList();
+			ViewBag.Timetables = Timetables;
+			ViewBag.UserNames = UserNames;
+			return View();
+			//return Json(new {timetables= Timetables, userNames = UserNames});
+		}
+
 	}
 }
