@@ -78,11 +78,7 @@ namespace Test.Controllers
 								table.Time = reader.GetValue(11).ToString();
 								table.Start = int.TryParse(reader.GetValue(12).ToString(), out number) ? number : 0;
 								table.End = int.TryParse(reader.GetValue(13).ToString(), out number) ? number : 0;
-<<<<<<< HEAD
-								table.Shift = reader.GetValue(14) == null ? null : reader.GetValue(14).ToString();
-=======
 								table.Shift = reader.GetValue(14) == null? null : reader.GetValue(14).ToString();
->>>>>>> f9d39c2bccf2e8102946245fac7fb7fcc9896e81
 								table.Week = reader.GetValue(15).ToString();
 								table.ClassRoom = reader.GetValue(16).ToString();
 								table.Experiment = reader.GetValue(17).ToString();

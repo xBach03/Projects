@@ -12,7 +12,7 @@ using Test.Models;
 namespace Test.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20231220094717_InitDb")]
+    [Migration("20231222083446_InitDb")]
     partial class InitDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -196,11 +196,29 @@ namespace Test.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<int>("Term")
+                        .HasColumnType("int");
+
                     b.HasKey("ClassId");
 
                     b.HasIndex("SubjectId");
 
                     b.ToTable("Class");
+                });
+
+            modelBuilder.Entity("Test.Models.ClassTb", b =>
+                {
+                    b.Property<int>("ClassId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TimetableId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ClassId", "TimetableId");
+
+                    b.HasIndex("TimetableId");
+
+                    b.ToTable("ClassTb");
                 });
 
             modelBuilder.Entity("Test.Models.ClassTime", b =>
@@ -246,12 +264,12 @@ namespace Test.Migrations
                     b.Property<int>("ClassId")
                         .HasColumnType("int");
 
-                    b.Property<int>("TimetableId")
-                        .HasColumnType("int");
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("ClassId", "TimetableId");
+                    b.HasKey("ClassId", "UserId");
 
-                    b.HasIndex("TimetableId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("ClassUser");
                 });
@@ -301,9 +319,6 @@ namespace Test.Migrations
                     b.Property<string>("SubjectName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Term")
-                        .HasColumnType("int");
 
                     b.HasKey("SubjectId");
 
@@ -392,7 +407,7 @@ namespace Test.Migrations
 
                     b.HasKey("TempID");
 
-                    b.ToTable("TempTables");
+                    b.ToTable("TempTable");
                 });
 
             modelBuilder.Entity("Test.Models.User", b =>
@@ -528,6 +543,25 @@ namespace Test.Migrations
                     b.Navigation("subject");
                 });
 
+            modelBuilder.Entity("Test.Models.ClassTb", b =>
+                {
+                    b.HasOne("Test.Models.Class", "classId")
+                        .WithMany()
+                        .HasForeignKey("ClassId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Test.Models.PTimetable", "timetableId")
+                        .WithMany()
+                        .HasForeignKey("TimetableId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("classId");
+
+                    b.Navigation("timetableId");
+                });
+
             modelBuilder.Entity("Test.Models.ClassTime", b =>
                 {
                     b.HasOne("Test.Models.Class", "classId")
@@ -547,15 +581,15 @@ namespace Test.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Test.Models.PTimetable", "timetableId")
+                    b.HasOne("Test.Models.User", "User")
                         .WithMany()
-                        .HasForeignKey("TimetableId")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("classId");
+                    b.Navigation("User");
 
-                    b.Navigation("timetableId");
+                    b.Navigation("classId");
                 });
 
             modelBuilder.Entity("Test.Models.PTimetable", b =>

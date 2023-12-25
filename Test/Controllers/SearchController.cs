@@ -116,5 +116,17 @@ namespace Test.Controllers
 			ViewBag.ResultClass = JsonResult;
 			return View();
 		}
+		//[HttpGet]
+		//public IActionResult TermSearch(int Term)
+		//{
+		//	List<Class> QueryClass = _context.Class.FromSqlInterpolated
+		//		(
+		//		$@"SELECT * 
+		//			FROM [Test].[dbo].[Class]
+		//			WHERE [Term] = {Term}"
+		//		).ToList();
+
+		//	return Json();
+		//}
 	}
 }

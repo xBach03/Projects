@@ -19,9 +19,10 @@
 		$.ajax({
 			url: '/Search/TermSearch',
 			type: 'GET',
-			data: { userName: userName },
-			success: function (users) {
-				console.log(users);
+			dataType: 'json',
+			data: { term: term },
+			success: function (timetableTerm) {
+				console.log(timetableTerm);
 			},
 			error: function (error) {
 				console.log(error);

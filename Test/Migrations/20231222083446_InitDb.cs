@@ -28,7 +28,6 @@ namespace Test.Migrations
                 columns: table => new
                 {
                     SubjectId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Term = table.Column<int>(type: "int", nullable: false),
                     School = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     SubjectName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ESubjectName = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -41,7 +40,7 @@ namespace Test.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TempTables",
+                name: "TempTable",
                 columns: table => new
                 {
                     TempID = table.Column<int>(type: "int", nullable: false)
@@ -73,7 +72,7 @@ namespace Test.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TempTables", x => x.TempID);
+                    table.PrimaryKey("PK_TempTable", x => x.TempID);
                 });
 
             migrationBuilder.CreateTable(
@@ -129,6 +128,7 @@ namespace Test.Migrations
                 columns: table => new
                 {
                     ClassId = table.Column<int>(type: "int", nullable: false),
+                    Term = table.Column<int>(type: "int", nullable: false),
                     AClassId = table.Column<int>(type: "int", nullable: true),
                     SubjectId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Note = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -285,11 +285,11 @@ namespace Test.Migrations
                 columns: table => new
                 {
                     ClassId = table.Column<int>(type: "int", nullable: false),
-                    TimetableId = table.Column<int>(type: "int", nullable: false)
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ClassUser", x => new { x.ClassId, x.TimetableId });
+                    table.PrimaryKey("PK_ClassUser", x => new { x.ClassId, x.UserId });
                     table.ForeignKey(
                         name: "FK_ClassUser_Class_ClassId",
                         column: x => x.ClassId,
@@ -297,7 +297,31 @@ namespace Test.Migrations
                         principalColumn: "ClassId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ClassUser_Timetable_TimetableId",
+                        name: "FK_ClassUser_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ClassTb",
+                columns: table => new
+                {
+                    ClassId = table.Column<int>(type: "int", nullable: false),
+                    TimetableId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClassTb", x => new { x.ClassId, x.TimetableId });
+                    table.ForeignKey(
+                        name: "FK_ClassTb_Class_ClassId",
+                        column: x => x.ClassId,
+                        principalTable: "Class",
+                        principalColumn: "ClassId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ClassTb_Timetable_TimetableId",
                         column: x => x.TimetableId,
                         principalTable: "Timetable",
                         principalColumn: "TimetableId",
@@ -310,9 +334,14 @@ namespace Test.Migrations
                 column: "SubjectId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ClassUser_TimetableId",
-                table: "ClassUser",
+                name: "IX_ClassTb_TimetableId",
+                table: "ClassTb",
                 column: "TimetableId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClassUser_UserId",
+                table: "ClassUser",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RoleClaims_RoleId",
@@ -362,6 +391,9 @@ namespace Test.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "ClassTb");
+
+            migrationBuilder.DropTable(
                 name: "ClassTime");
 
             migrationBuilder.DropTable(
@@ -371,7 +403,7 @@ namespace Test.Migrations
                 name: "RoleClaims");
 
             migrationBuilder.DropTable(
-                name: "TempTables");
+                name: "TempTable");
 
             migrationBuilder.DropTable(
                 name: "UserClaims");
@@ -386,19 +418,19 @@ namespace Test.Migrations
                 name: "UserTokens");
 
             migrationBuilder.DropTable(
-                name: "Class");
+                name: "Timetable");
 
             migrationBuilder.DropTable(
-                name: "Timetable");
+                name: "Class");
 
             migrationBuilder.DropTable(
                 name: "Roles");
 
             migrationBuilder.DropTable(
-                name: "Subject");
+                name: "Users");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                name: "Subject");
         }
     }
 }
