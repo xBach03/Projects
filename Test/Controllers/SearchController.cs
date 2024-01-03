@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -151,7 +152,70 @@ namespace Test.Controllers
 			ViewBag.Timetables = Timetables;
 			ViewBag.UserNames = UserNames;
 			return View();
-			//return Json(new {timetables= Timetables, userNames = UserNames});
+		}
+		public List<string> SubjectRecommendation(int UserYear, int UserTerm)
+		{
+			List<string> results = new List<string>();
+			int Term = UserTerm % 10;
+			if(UserYear == 1)
+			{
+				results = new List<string>() { "SSH1131" };
+			} else if(UserYear == 2)
+			{
+				if(Term == 1)
+				{
+					results = new List<string>() { "ET2021", "ET2031", "MI2020", "PH1122", "PH3330", "SSH1141"};
+				} else if(Term == 2)
+				{
+                    results = new List<string>() { "ED3280", "ET2040", "ET2050", "ET2060", "ET2100", "ET3210", "MI1131" };
+                } else
+				{
+					results = new List<string>() { "SSH1151" };
+				}
+			} else if(UserYear == 3)
+			{
+                if (Term == 1)
+                {
+                    results = new List<string>() { "ET2022", "ET2072", "ET3220", "ET3230", "ET3260", "ET3280", "ME3123", "MI2010" };
+                }
+                else if (Term == 2)
+                {
+                    results = new List<string>() { "ET2080", "ET3241", "ET3250", "ET3290", "ET3300", "ET4020" };
+                }
+                else
+                {
+                    results = new List<string>() { "ET3270" };
+                }
+            } else
+			{
+                if (Term == 1)
+                {
+                    results = new List<string>() { "ET4010", "ET3310", "ET4070", "ET4230", "ET4250", "ET4291" };
+                }
+                else if (Term == 2)
+                {
+                    results = new List<string>() { "ET4920" };
+                }
+            }
+			return results;
+		}
+		public async Task<IActionResult> Recommender()
+		{
+			int UserYear = new int();
+			int[] Year = new int[] { 1, 2, 3, 4, 5, 6 };
+			string[] UserCourse = new string[] { "K68", "K67", "K66", "K65", "K64", "K63" };
+            var userManager = HttpContext.RequestServices.GetRequiredService<UserManager<User>>();
+            User currentUser = await userManager.GetUserAsync(HttpContext.User);
+			for (int i = 0; i < Year.Length; i++)
+			{
+				if(currentUser.Course == UserCourse[i])
+				{
+					UserYear = Year[i];
+				}
+			}
+			int UserTerm = _context.TempTable.First().Term;
+			var RecommendedSubjects = SubjectRecommendation(UserYear, UserTerm);
+            return Json(RecommendedSubjects);
 		}
 	}
 }

@@ -33,7 +33,6 @@ namespace Test.Controllers
 			_logger.LogInformation("ExcelReader");
 			System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
 			// Upload file
-			const int batchSize = 1000;
 			if (file != null && file.Length > 0)
 			{
 				var uploadDirectory = $"{Directory.GetCurrentDirectory()}\\wwwroot\\Uploads";
@@ -89,10 +88,9 @@ namespace Test.Controllers
 								table.OpenStage = reader.GetValue(22).ToString();
 								table.EduProgram = reader.GetValue(23).ToString();
 								_context.TempTable.Add(table);
-								if (_context.TempTable.Local.Count % batchSize == 0)
-								{
-									await _context.SaveChangesAsync();
-								}
+
+								await _context.SaveChangesAsync();
+
 
 							}
 						} while (reader.NextResult());
@@ -101,6 +99,86 @@ namespace Test.Controllers
 				}
 			}
 			return View();
+		}
+		public List<string> SubjectRecommendation(int UserYear, int UserTerm)
+		{
+			List<string> results = new List<string>();
+			int Term = UserTerm % 10;
+			if (UserYear == 1)
+			{
+				results = new List<string>() { "SSH1131" };
+			}
+			else if (UserYear == 2)
+			{
+				if (Term == 1)
+				{
+					results = new List<string>() { "ET2021", "ET2031", "MI2020", "PH1122", "PH3330", "SSH1141" };
+				}
+				else if (Term == 2)
+				{
+					results = new List<string>() { "ED3280", "ET2040", "ET2050", "ET2060", "ET2100", "ET3210", "MI1131" };
+				}
+				else
+				{
+					results = new List<string>() { "SSH1151" };
+				}
+			}
+			else if (UserYear == 3)
+			{
+				if (Term == 1)
+				{
+					results = new List<string>() { "ET2022", "ET2072", "ET3220", "ET3230", "ET3260", "ET3280", "ME3123", "MI2010" };
+				}
+				else if (Term == 2)
+				{
+					results = new List<string>() { "ET2080", "ET3241", "ET3250", "ET3290", "ET3300", "ET4020" };
+				}
+				else
+				{
+					results = new List<string>() { "ET3270" };
+				}
+			}
+			else
+			{
+				if (Term == 1)
+				{
+					results = new List<string>() { "ET4010", "ET3310", "ET4070", "ET4230", "ET4250", "ET4291" };
+				}
+				else if (Term == 2)
+				{
+					results = new List<string>() { "ET4920" };
+				}
+			}
+			return results;
+		}
+		[HttpGet]
+		public IActionResult Recommender(string userName)
+		{
+			int UserYear = new int();
+			int[] Year = new int[] { 1, 2, 3, 4, 5, 6 };
+			string[] Course = new string[] { "K68", "K67", "K66", "K65", "K64", "K63" };
+			_logger.LogInformation(userName);
+			if (userName != null)
+			{
+				
+				string? course = _context.Users.FirstOrDefault(u => u.UserName == userName).Course;
+				for (int i = 0; i < Year.Length; i++)
+				{
+					if (course == Course[i])
+					{
+						UserYear = Year[i];
+					}
+				}
+				int UserTerm = _context.TempTable.First().Term;
+				var RecommendedSubjects = SubjectRecommendation(UserYear, UserTerm);
+				return Json(RecommendedSubjects);
+			}
+			for(int i = 0; i < 10; i++)
+			{
+
+			}
+			_logger.LogInformation(userName);
+			return Json(null);
 		}
 		[HttpGet]
 		public IActionResult SubjectSearch(string subjectId)
@@ -244,8 +322,8 @@ namespace Test.Controllers
 						Note = SelectedClass.Note,
 						Experiment = SelectedClass.Experiment,
 						OpenStage = SelectedClass.OpenStage,
-                        Term = SelectedClass.Term
-                    };
+						Term = SelectedClass.Term
+					};
 					
 					_context.Class.Add(Class);
 				}

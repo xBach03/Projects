@@ -4,10 +4,13 @@
 @{
 	ViewData["Title"] = "Excel Reader";
 }
+@using Microsoft.AspNetCore.Identity
+@using Test.Models
+@inject UserManager<User> UserManager
 <div class="text-center">
 	<div class="active-cyan-4 mb-4">
 		<div>
-			<input class="form-control" type="text" placeholder="Enter Subject ID" id="Subject">
+			<input class="form-control" type="text" placeholder="Enter Subject ID" id="Subject" onclick="recommender('@UserManager.GetUserName(User)'); this.onclick=null;">
 			<div class="col-1">
 				<button class="btn btn-success" onclick="subjectSearch()">Find this subject</button>
 			</div>
@@ -26,6 +29,9 @@
 			</div>
 		</div>
 	</div>
+	
+</div>
+<div id="div2" class="container">
 </div>
 <script src="~/js/SubjectSearch.js" asp-append-version="true"></script>
 
