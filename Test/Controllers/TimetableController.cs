@@ -88,10 +88,7 @@ namespace Test.Controllers
 								table.OpenStage = reader.GetValue(22).ToString();
 								table.EduProgram = reader.GetValue(23).ToString();
 								_context.TempTable.Add(table);
-								
-									await _context.SaveChangesAsync();
-								
-
+								await _context.SaveChangesAsync();
 							}
 						} while (reader.NextResult());
 						
@@ -100,6 +97,7 @@ namespace Test.Controllers
 			}
 			return View();
 		}
+		// Action nay se tra ve cac mon hoc co ma mon hoc voi tham so subjectId
 		[HttpGet]
 		public IActionResult SubjectSearch(string subjectId)
 		{
@@ -110,6 +108,7 @@ namespace Test.Controllers
 			}
 			return Json("No subject found");
 		}
+		// Session de luu lai cac ma mon hoc da tim kiem
 		private List<string> GetSearchHistory()
 		{
 			// chuoi json dc tra ve SearchHistoryJson 
@@ -129,7 +128,7 @@ namespace Test.Controllers
 			var searchHistoryJson = JsonConvert.SerializeObject(searchHistory);
 			HttpContext.Session.SetString("SearchHistory", searchHistoryJson);
 		}
-
+		// Luu cac ma mon hoc da tim kiem vao session de thuc hien xep tkb trong view tiep theo
 		[HttpPost]
 		public IActionResult SubjectList([FromBody] List<string> SelectedSubjects)
 		{
@@ -137,6 +136,7 @@ namespace Test.Controllers
 			AddToSearchHistory(SelectedSubjects);
 			return Json(Url.Action("Arrange"));
 		}
+		// Tim kiem cac mon hoc theo SubjectId
 		public IActionResult Arrange()
 		{
 			_logger.LogInformation("Arrange action");
@@ -157,6 +157,7 @@ namespace Test.Controllers
 			ViewBag.Subjects = subjectList;
 			return View();
 		}
+		// Action tra ve cac lop co cung ma mon hoc
 		[HttpGet]
 		public IActionResult GetClassesBySubjectId(string subjectId)
 		{
@@ -170,6 +171,7 @@ namespace Test.Controllers
 			}
 			return Json(result);
 		}
+		// Action bat dong bo de luu thoi khoa bieu vao timetable
 		[HttpPost]
 		public async Task<IActionResult> SaveTimetable([FromBody] List<TempTimetable> SelectedClasses)
 		{

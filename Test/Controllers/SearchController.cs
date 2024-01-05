@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -19,6 +20,7 @@ namespace Test.Controllers
 		{
 			return View();
 		}
+		// Action tim kiem User va se tra ve query string de redirect den view
 		[HttpGet]
 		public IActionResult UserSearch(string searchData)
 		{
@@ -34,6 +36,7 @@ namespace Test.Controllers
 				return Json("No user found");
 			}
 		}
+		// Action nhan tham so la userId de bieu dien User cung cac tkb cua User do
 		public IActionResult DisplayUser(string userId)
 		{
 			_logger.LogInformation("DisplayUser action");
@@ -165,8 +168,38 @@ namespace Test.Controllers
 			ViewBag.Timetables = Timetables;
 			ViewBag.UserNames = UserNames;
 			return View();
-			//return Json(new {timetables= Timetables, userNames = UserNames});
+			
 		}
+		List<string> SubjectRecommendation(int UserCourse, int CurrentTerm)
+		{
+			List<string> Subjects;
+			string[,] RcmSubjects = new string[,] {
+				{ "SSH1131", "ET2023" },
+				{"ET2021", "ET2031", "MI2020", "PH1122", "PH3330", "SSH1141" },
+				{ "ET2020",  },
+				{ }
+			};
+			if()
+			return 
+		}
+		public async Task<IActionResult> Recommender()
+		{
+			// K68, 67, 66, 65, 64, 63
+			int[] Year = new int[] { 2, 3, 4, 5, 6 };
+			string[] Course = new string[] { "K67", "K66", "K65", "K64", "K63" };
+			int UserCourse;
+            var userManager = HttpContext.RequestServices.GetRequiredService<UserManager<User>>();
+            User currentUser = await userManager.GetUserAsync(HttpContext.User);
+			for(int i = 0; i < Course.Length; i++)
+			{
+				if(currentUser.Course == Course[i])
+				{
+					UserCourse = Year[i];
+				}
+			}
+			int CurrentTerm = _context.TempTable.First().Term;
 
+            return Json();
+		}
 	}
 }
