@@ -88,14 +88,10 @@ namespace Test.Controllers
 								table.OpenStage = reader.GetValue(22).ToString();
 								table.EduProgram = reader.GetValue(23).ToString();
 								_context.TempTable.Add(table);
-<<<<<<< HEAD
 								await _context.SaveChangesAsync();
-=======
-
 								await _context.SaveChangesAsync();
 
 
->>>>>>> 1f22fef2827d22986dbcfae90102df01b064a250
 							}
 						} while (reader.NextResult());
 						
@@ -104,9 +100,8 @@ namespace Test.Controllers
 			}
 			return View();
 		}
-<<<<<<< HEAD
 		// Action nay se tra ve cac mon hoc co ma mon hoc voi tham so subjectId
-=======
+
 		public List<string> SubjectRecommendation(int UserYear, int UserTerm)
 		{
 			List<string> results = new List<string>();
@@ -187,7 +182,6 @@ namespace Test.Controllers
 			_logger.LogInformation(userName);
 			return Json(null);
 		}
->>>>>>> 1f22fef2827d22986dbcfae90102df01b064a250
 		[HttpGet]
 		public IActionResult SubjectSearch(string subjectId)
 		{
