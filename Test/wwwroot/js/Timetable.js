@@ -1,4 +1,5 @@
 var selectedSubjects = [];
+// Yeu cau ajax de fetch thong tin ve cac lop cua 1 mon hoc cu the
 function showClasses(subjectId) {
 
 	$.ajax({
@@ -17,10 +18,17 @@ function showClasses(subjectId) {
 }
 function timeConverter(time) {
 	if (time == '0645') return 1;
+<<<<<<< HEAD
 	else if (time == '0730') return 2;
 	else if (time == '0815') return 3;
 	else if (time == '0825') return 4;
 	else if (time == '0910') return 5;
+=======
+	else if (time == '0700') return 2;
+	else if (time == '0730') return 3;
+	else if (time == '0815') return 4;
+	else if (time == '0825') return 5;
+>>>>>>> 1f22fef2827d22986dbcfae90102df01b064a250
 	else if (time == '0920') return 6;
 	else if (time == '0930') return 7;
 	else if (time == '1005') return 8;
@@ -28,6 +36,7 @@ function timeConverter(time) {
 	else if (time == '1100') return 10;
 	else if (time == '1145') return 11;
 	else if (time == '1230') return 12;
+<<<<<<< HEAD
 	else if (time == '1315') return 13;
 	else if (time == '1400') return 14;
 	else if (time == '1410') return 15;
@@ -38,6 +47,19 @@ function timeConverter(time) {
 	else if (time == '1645') return 20;
 	else if (time == '1705') return 21;
 	else if (time == '1730') return 22;
+=======
+	else if (time == '1245') return 13;
+	else if (time == '1315') return 14;
+	else if (time == '1400') return 15;
+	else if (time == '1410') return 16;
+	else if (time == '1455') return 17;
+	else if (time == '1505') return 18;
+	else if (time == '1550') return 19;
+	else if (time == '1600') return 20;
+	else if (time == '1645') return 21;
+	else if (time == '1705') return 22;
+	else if (time == '1730') return 23;
+>>>>>>> 1f22fef2827d22986dbcfae90102df01b064a250
 }
 
 function displaySubjects(classData) {
@@ -161,6 +183,7 @@ function clearCells(cells, classInfo) {
 	selectedSubjects.splice(deleteIndex, 1);
 	console.log(selectedSubjects);
 }
+// Yeu cau ajax de luu tkb
 function saveTimetable() {
 	$.ajax({
 		url: '/Timetable/SaveTimetable',

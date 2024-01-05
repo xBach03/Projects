@@ -1,4 +1,19 @@
 var selectedSubjects = [];
+function recommender(userName) {
+	$.ajax({
+		url: '/Timetable/Recommender',
+		type: 'GET',
+		dataType: 'json',
+		data: { userName: userName },
+		success: function (recommendedSubjects) {
+			console.log(recommendedSubjects)
+			displayRecommendations(recommendedSubjects);
+		},
+		error: function (error) {
+			console.log(error);
+		}
+	});
+}
 function subjectSearch() {
 	var subjectId = document.getElementById("Subject").value;
 	$.ajax({
@@ -20,6 +35,11 @@ function subjectSearch() {
 			console.log('Error fetching class data:', error);
 		}
 	});
+}
+function displayRecommendations(recommendedSubjects) {
+	var div2 = document.getElementById("div2");
+	var content = recommendedSubjects.join(", ");
+	div2.textContent = "Recommendations for you this term: " + content;
 }
 var div = document.getElementById("div1");
 var table = document.createElement("table");
